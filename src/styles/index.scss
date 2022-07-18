@@ -1,0 +1,19 @@
+// 引入全局样式
+@import 'vant/lib/index.css';
+@import './reset.css';
+
+body {
+  height: 100%;
+  background-color: #f4f4f4;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#app {
+  height: 100%;
+  font-size: 12px;
+  color: #333;
+}
