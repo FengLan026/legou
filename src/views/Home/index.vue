@@ -2,10 +2,14 @@
   <div>
     <!-- 搜索栏 -->
     <van-row class="search-bar" type="flex" align="center">
-      <van-col :span="4" class="address">
-        <span>定位</span>
+      <van-col
+        :span="4"
+        class="address"
+        @click="$router.push('/pages/feedback/main')"
+      >
+        <span>{{ city }}</span>
       </van-col>
-      <van-col :span="12">
+      <van-col :span="12" @click="$router.push('/search')">
         <van-field
           class="search"
           left-icon="search"
@@ -22,7 +26,11 @@
     </van-swipe>
     <!-- 频道 -->
     <van-grid column-num="5" class="channel-bar">
-      <van-grid-item v-for="item in channel" :key="item.id">
+      <van-grid-item
+        v-for="item in channel"
+        :key="item.id"
+        @click="toCategoryGoodsList(item.id)"
+      >
         <template>
           <img width="29" :src="item.icon_url" alt="" />
           <p class="channel-name">{{ item.name }}</p>
@@ -55,7 +63,12 @@
     <div class="topic-list">
       <p class="title">专题精选</p>
       <div class="content">
-        <div class="topic-item" v-for="item in topicList" :key="item.id">
+        <div
+          class="topic-item"
+          v-for="item in topicList"
+          :key="item.id"
+          @click="toDetail(item.id)"
+        >
           <img class="topic-img" :src="item.item_pic_url" alt="" />
           <div class="text">
             <span class="item-title">{{ item.title }}</span>
@@ -74,8 +87,10 @@
 import { getHomeData } from "@/api/home";
 import GoodsShowBar from "./components/GoodsShowBar.vue";
 import CategoryList from "./components/CategoryList.vue";
+import { getCategoryListData } from "@/api/category";
 export default {
   components: { GoodsShowBar, CategoryList },
+  name: "home",
   data() {
     return {
       banner: [], // 轮播
@@ -85,10 +100,13 @@ export default {
       hotGoods: [], // 人气推荐
       topicList: [], // 专题
       newCategoryList: [], // 分类
+      city: "",
+      currentAddress: this.$store.getters.currentAddress,
     };
   },
   created() {
     this.getHomeData();
+    this.getCityLocation();
   },
   methods: {
     async getHomeData() {
@@ -102,12 +120,48 @@ export default {
       this.topicList = res.topicList;
       this.newCategoryList = res.newCategoryList;
     },
+    async toCategoryGoodsList(id) {
+      const { data } = await getCategoryListData(id);
+      console.log(data);
+      this.$router.push({
+        path: "/categorylist/main",
+        query: { id: data.currentOne.subList[0].id },
+      });
+    },
+    toDetail(id) {
+      this.$router.push({
+        path: "/pages/topicdetail/main",
+        query: {
+          id,
+        },
+      });
+    },
+    getCityLocation() {
+      var _this = this;
+      if (this.currentAddress.name) {
+        this.city = this.currentAddress.name;
+      } else {
+        AMap.plugin("AMap.CitySearch", function () {
+          var citySearch = new AMap.CitySearch();
+          citySearch.getLocalCity(function (status, result) {
+            if (status === "complete" && result.info === "OK") {
+              // 查询成功，result即为当前所在城市信息
+              //console.log(result);
+              _this.city = result.city;
+            }
+          });
+        });
+      }
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .search-bar {
+  position: fixed;
+  top: 0;
+  z-index: 999;
   width: 100%;
   height: 44px;
   background-color: #fff;
@@ -121,7 +175,7 @@ export default {
 .banner-swipe {
   width: 100%;
   height: 200px;
-  margin-top: 2px;
+  margin-top: 48px;
   background-color: #fff;
   .banner-img {
     width: 100%;

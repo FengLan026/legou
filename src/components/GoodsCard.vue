@@ -1,16 +1,41 @@
 <template>
   <ul class="goods-list">
-    <li class="goods-item" v-for="item in data" :key="item.id">
+    <li
+      class="goods-item"
+      v-for="item in data"
+      :key="item.id"
+      @click="toGoodsDetail(item.id)"
+    >
       <img class="goods-img" :src="item.list_pic_url" alt="" />
-      <p class="title">{{ item.name }}</p>
-      <p class="price">￥{{ item.retail_price }}</p>
+      <p :style="{ textAlign: align }" class="title">{{ item.name }}</p>
+      <p :style="{ textAlign: align }" class="price">
+        ￥{{ item.retail_price }}
+      </p>
     </li>
   </ul>
 </template>
 
 <script>
 export default {
-  props: ["data"],
+  props: ["data", "align"],
+  props: {
+    data: {
+      required: true,
+    },
+    align: {
+      default: "center",
+    },
+  },
+  methods: {
+    toGoodsDetail(id) {
+      this.$router.push({
+        path: "/pages/goods/main",
+        query: {
+          id,
+        },
+      });
+    },
+  },
 };
 </script>
 
@@ -24,7 +49,7 @@ export default {
     width: 186px;
     background-color: #fff;
     padding: 12px 18px;
-    text-align: center;
+    // text-align: center;
     margin-top: 4px;
     .goods-img {
       width: 150px;

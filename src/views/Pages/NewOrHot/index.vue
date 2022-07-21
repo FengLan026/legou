@@ -1,28 +1,12 @@
 <template>
   <div>
-    <header-back-bar title="搜索" />
-    <form action="/">
-      <van-search
-        v-model="value"
-        @input="getSearchKey(value)"
-        @change="addHistory"
-        show-action
-        placeholder="搜索商品"
-        :clearable="false"
+    <header-back-bar :title="title" />
+    <div class="header">
+      <img
+        class="header-img"
+        src="http://yanxuan.nosdn.127.net/8976116db321744084774643a933c5ce.png"
+        alt=""
       />
-    </form>
-    <keyword-card
-      title="历史记录"
-      :data="historyData"
-      @searchByKey="searchByKey"
-    />
-    <keyword-card
-      title="热门搜索"
-      :data="hotKeywordList"
-      :clear="false"
-      @searchByKey="searchByKey"
-    />
-    <div class="dialog" v-if="value">
       <div class="header-bar">
         <div
           class="default"
@@ -30,7 +14,7 @@
           @click="
             active = 0;
             order = '';
-            getSearchKey();
+            getNewOrHot();
           "
         >
           综合
@@ -47,81 +31,76 @@
           价格
         </div>
       </div>
-      <goods-card :data="searchList" />
     </div>
+    <goods-card :data="data" />
   </div>
 </template>
 
 <script>
-import { getSearchHistory, getSearchKey, addHistory } from "@/api/search";
-import keywordCard from "./components/keywordCard.vue";
+import { getNewOrHot } from "@/api/home";
 export default {
-  components: { keywordCard },
-  name: "search",
   data() {
     return {
-      value: "",
-      order: "",
-      historyData: [],
-      hotKeywordList: [],
-      searchList: [],
+      data: [],
       active: 0,
+      order: "",
     };
   },
   created() {
-    this.getSearchHistory();
+    this.getNewOrHot();
+  },
+  computed: {
+    params() {
+      if (this.$route.query.model == "new") {
+        return {
+          isNew: 1,
+        };
+      } else if (this.$route.query.model == "hot") {
+        return {
+          isHot: 1,
+        };
+      }
+    },
+    title() {
+      if (this.$route.query.model == "new") {
+        return "新品首发";
+      } else if (this.$route.query.model == "hot") {
+        return "人气推荐";
+      }
+    },
   },
   methods: {
-    async getSearchHistory() {
-      const { hotKeywordList, historyData } = await getSearchHistory();
-      this.historyData = historyData;
-      this.hotKeywordList = hotKeywordList;
-      console.log(historyData);
-    },
-    async getSearchKey() {
-      const params = {
-        keyword: this.value,
-      };
-      params.order = this.order;
-      const { keywords } = await getSearchKey(params);
-      this.searchList = keywords;
+    async getNewOrHot() {
+      this.params.order = this.order;
+      const { data } = await getNewOrHot(this.params);
+      console.log(data);
+      this.data = data;
     },
     priceOrder() {
       if (this.active != 1) {
         this.active = 1;
         this.order = "asc";
-        this.getSearchKey();
+        this.getNewOrHot();
       } else if (this.active == 1) {
         if (this.order == "desc") {
           this.order = "asc";
-          this.getSearchKey();
+          this.getNewOrHot();
           return;
         }
         this.order = "desc";
-        this.getSearchKey();
+        this.getNewOrHot();
       }
-    },
-    async addHistory() {
-      await addHistory(this.value);
-      this.getSearchHistory();
-    },
-    searchByKey(value) {
-      this.value = value;
-      this.addHistory();
     },
   },
 };
 </script>
 
-
 <style lang="scss" scoped>
-.dialog {
-  position: fixed;
-  top: 100px;
-  width: 100%;
-  background-color: #f4f4f4;
-  height: 88%;
-  overflow: auto;
+.header {
+  .header-img {
+    width: 100%;
+    height: 140px;
+  }
   .header-bar {
     width: 100%;
     height: 40px;

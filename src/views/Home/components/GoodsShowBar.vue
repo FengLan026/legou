@@ -7,13 +7,22 @@
         <router-link
           class="total"
           :class="[bgImg == '0' ? 'new' : 'hot']"
-          to="#"
-          >查看全部</router-link
+          :to="{
+            path: '/pages/newgoods/main',
+            query,
+          }"
         >
+          查看全部
+        </router-link>
       </div>
     </div>
     <ul class="main">
-      <li class="item" v-for="item in listData" :key="item.id">
+      <li
+        class="item"
+        v-for="item in listData"
+        :key="item.id"
+        @click="toGoodsDetail(item.id)"
+      >
         <img :src="item.list_pic_url" alt="" />
         <p class="title">{{ item.name }}</p>
         <p class="des">{{ item.goods_brief }}</p>
@@ -31,7 +40,21 @@ export default {
       current: 0,
     };
   },
-  methods: {},
+  computed: {
+    query() {
+      return this.bgImg == "0" ? { model: 'new' } : { model: 'hot' };
+    },
+  },
+  methods: {
+    toGoodsDetail(id) {
+      this.$router.push({
+        path: "/pages/goods/main",
+        query: {
+          id,
+        },
+      });
+    },
+  },
 };
 </script>
 

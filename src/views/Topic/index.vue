@@ -23,9 +23,10 @@
 <script>
 import { getTopicData } from "@/api/topic";
 export default {
+  name: "topic",
   data() {
     return {
-      page: 1,
+      page: 0,
       topicList: [],
       total: 0,
       loading: false,
@@ -33,7 +34,7 @@ export default {
     };
   },
   created() {
-    this.init();
+    // this.init();
   },
   methods: {
     async init() {
@@ -46,9 +47,10 @@ export default {
       // setTimeout 仅做示例，真实场景中一般为 ajax 请求
       this.page++;
       console.log(this.page);
-      const { data } = await getTopicData(this.page);
+      const { data, total } = await getTopicData(this.page);
       console.log(data);
       this.topicList = [...this.topicList, ...data];
+      this.total = total;
       this.$toast.loading({
         message: "加载中",
         duration: 300,

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="search-bar">
-      <router-link class="search" to="@/views/Search">
+      <router-link class="search" to="/search">
         <van-icon name="search" size="16" />
         商品搜索
       </router-link>
@@ -38,6 +38,7 @@
 <script>
 import { getCategoryNavData, getCategoryListData } from "@/api/category";
 export default {
+  name:'category',
   data() {
     return {
       activeKey: 0,
@@ -58,11 +59,9 @@ export default {
       this.getCategoryListData(this.id);
     },
     async getCategoryListData(id) {
-      this.$toast.loading({
-        message: "加载中",
-        duration: 300,
-      });
+      this.$toast.loading("加载中");
       const { data } = await getCategoryListData(id);
+      this.$toast.clear();
       console.log(data);
       this.categoryDetail = data.currentOne;
     },

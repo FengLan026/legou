@@ -6,6 +6,7 @@ export function getCategoryNavData() {
     url: "/category/indexaction"
   })
 }
+
 // 获取分类列表
 export function getCategoryListData(id) {
   return request({
@@ -16,8 +17,10 @@ export function getCategoryListData(id) {
 // 获取商品页导航
 export function getGoodsNavData(id) {
   return request({
-    url: `/category/categoryNav?id=${id}`,
-
+    url: '/category/categoryNav',
+    params: {
+      id
+    }
   })
 }
 

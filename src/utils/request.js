@@ -26,6 +26,7 @@ request.interceptors.request.use(config => {
     //  arrayFormat: 'repeat' 作用:  { a: ['b', 'c'] }  ==> 'a=b&a=c'
     //  allowDots: true  作用: { a: { b: { c: 'd', e: 'f' } } }  ==>  'a.b.c=d&a.b.e=f'
     config.data = qs.stringify(config.data, { arrayFormat: 'repeat', allowDots: true })
+    return config
   } else {
     // config.params = config.data
     return config

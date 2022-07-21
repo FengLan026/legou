@@ -7,12 +7,17 @@
     >
       <p class="title">{{ category.name }}好物</p>
       <ul class="category">
-        <li class="category-item" v-for="el in category.goodsList" :key="el.id">
+        <li
+          class="category-item"
+          v-for="el in category.goodsList"
+          :key="el.id"
+          @click="toGoodsDetail(el.id)"
+        >
           <img class="item-img" :src="el.list_pic_url" alt="" />
           <p class="item-name">{{ el.name }}</p>
           <p class="item-price">￥{{ el.retail_price }}</p>
         </li>
-        <li class="category-item">
+        <li class="category-item" @click="toCategoryGoodsList(category.id)">
           <p class="more">{{ category.name }}好物</p>
           <div class="icon"></div>
         </li>
@@ -22,14 +27,34 @@
 </template>
 
 <script>
+import { getCategoryListData } from "@/api/category";
 export default {
   props: ["categoryList"],
+  methods: {
+    toGoodsDetail(id) {
+      this.$router.push({
+        path: "/pages/goods/main",
+        query: {
+          id,
+        },
+      });
+    },
+    async toCategoryGoodsList(id) {
+      const { data } = await getCategoryListData(id);
+      console.log(data);
+      this.$router.push({
+        path: "/categorylist/main",
+        query: { id: data.currentOne.subList[0].id },
+      });
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .container {
   width: 375px;
+  margin-bottom: 20px;
   .category-list {
     margin-top: 12px;
     width: 100%;

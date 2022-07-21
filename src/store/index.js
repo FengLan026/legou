@@ -1,16 +1,17 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import user from "./modules/user"
 import getters from "./getters"
+import address from "./modules/address"
+import map from "./modules/map"
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   modules: {
-    user,
+    address,
+    map
   },
   getters
 })
 
 export default store
-

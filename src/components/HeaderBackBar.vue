@@ -6,7 +6,7 @@
     :title="title"
     left-text="返回"
     left-arrow
-    @click-left="$router.back()"
+    @click-left="back"
   />
 </template>
 
@@ -14,7 +14,24 @@
 export default {
   props: {
     title: {
+      type: String,
       default: "不凡",
+    },
+  },
+  computed: {
+    history() {
+      if (!this.$route.meta.history) {
+        return 1;
+      } else {
+        const history = this.$route.meta.history;
+        this.$route.meta.history = 1;
+        return history;
+      }
+    },
+  },
+  methods: {
+    back() {
+      this.$router.go(-this.history);
     },
   },
 };
@@ -22,7 +39,8 @@ export default {
 
 <style lang="scss" scoped>
 .header-back-bar {
-  width: 100%;
-  height: 46px;
+  ::v-deep .van-nav-bar__content {
+    height: 50px;
+  }
 }
 </style>

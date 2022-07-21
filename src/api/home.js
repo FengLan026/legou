@@ -13,3 +13,12 @@ export function getBrandDetailData(id) {
     url: `/brand/detailaction?id=${id}`,
   })
 }
+
+// 新品首发&人气推荐
+// order 排序asc 价格从小到大展示 desc 价格从大到小展示
+export function getNewOrHot(params) {
+  return request({
+    url: '/goods/goodsList',
+    params
+  })
+}
